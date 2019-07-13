@@ -1,0 +1,65 @@
+name:                reflex-chartjs
+version:             0.1.0.0
+synopsis:            Reflex ChartJS
+description:         Please see README.md
+homepage:            http://github.com/atidot/ux/reflex/reflex-chartjs
+license:             MIT
+license-file:        LICENSE
+tested-with:         GHCJS == 8.2.2
+author:              Atidot Ltd
+maintainer:          devops@atidot.com
+copyright:           Copyright Atidot Ltd 2016
+category:            Other
+build-type:          Simple
+cabal-version:       >=1.10
+
+library
+  hs-source-dirs:      src
+  exposed-modules:     Reflex.ChartJS.Types.Types
+                     , Reflex.ChartJS.Types.Lens
+                     , Reflex.ChartJS.Types.Default
+                     , Reflex.ChartJS.Types.Json
+                     , Reflex.ChartJS.Types
+                     , Reflex.ChartJS.FFI
+                     , Reflex.ChartJS.ChartJS
+
+  build-depends:       base
+                     , lens
+                     , mtl
+                     , bytestring
+                     , text
+                     , containers
+                     , dependent-map
+                     , data-default
+                     , aeson
+                     , aeson-qq
+                     , derive
+                     , jsaddle
+                     , ghcjs-dom
+                     , reflex
+                     , reflex-dom
+                     , ref-tf
+
+  ghc-options:         -O2 -Wall -Werror
+  default-language:    Haskell2010
+
+executable reflex-chartjs-exe
+  main-is: Main.hs
+  hs-source-dirs:
+      app
+  ghc-options: -threaded
+  build-depends:
+      base >=4.7 && <5
+    , lens
+    , time
+    , text
+    , data-default
+    , aeson
+    , bytestring
+    , reflex-dom
+    , reflex-chartjs
+  default-language: Haskell2010
+
+source-repository head
+  type:     git
+  location: https://github.com/atidot/reflex-chartjs
