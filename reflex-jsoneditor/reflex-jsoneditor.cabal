@@ -16,11 +16,18 @@ cabal-version:       >=1.10
 library
   hs-source-dirs:      src
   exposed-modules:     Reflex.JsonEditor
+                     , Reflex.JsonEditor.Types
+                     , Reflex.JsonEditor.Types.Types
+                     , Reflex.JsonEditor.Types.Lens
+                     , Reflex.JsonEditor.Types.Default
+                     , Reflex.JsonEditor.Types.Json
                      , Reflex.JsonEditor.JsonEditor
                      , Reflex.JsonEditor.FFI
   build-depends:       base
+                     , lens
                      , text
                      , aeson
+                     , derive
                      , containers
                      , data-default
                      , jsaddle

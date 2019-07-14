@@ -30,7 +30,7 @@ jsoneditor jsonableD = do
     let newJsonableE = fmapMaybe id newJsonableE_ -- fires only when (Just _)
     initial <- sample . current $ jsonableD
     newJsonableD <- holdDyn initial newJsonableE
-    return $ uniqDyn newJsonableD
+    return $ newJsonableD
 
 
 --
@@ -91,8 +91,7 @@ jsoneditor_ jsonableD = do
                     -- ^ json data
                     -> IO ()
         onFirstTime element_ jsonEditorRef trigger jsonable_ = do
-            ref <- newJsonEditor element_
-                                 trigger
+            ref <- newJsonEditor element_ def
             writeIORef jsonEditorRef (Just ref)
             set ref jsonable_
             trigger (Just jsonable_)
