@@ -11,10 +11,9 @@ module Reflex.CodeMirror ( module Reflex.CodeMirror.Types
 import "base"             Control.Monad.IO.Class (liftIO)
 import "base"             Data.IORef (IORef, newIORef, writeIORef, readIORef)
 import "text"             Data.Text (Text)
-import "ghcjs-base"       GHCJS.Types (JSVal)
-import "ghcjs-base"       GHCJS.Marshal (fromJSVal)
-import "ghcjs-dom-jsffi"  GHCJS.DOM.Element (IsElement)
+import "jsaddle"          Language.Javascript.JSaddle -- (JSVal) --  GHCJS.Types (JSVal)
 import "reflex-dom"       Reflex.Dom
+import                    GHCJS.DOM.Element -- (IsElement)
 import                    Reflex.CodeMirror.FFI
 import                    Reflex.CodeMirror.Types hiding (configuration)
 
@@ -39,10 +38,11 @@ codemirror configuration = do
     (outE :: Event t Text, triggerOut) <- newTriggerEvent
 
     -- handle input event
-    performEvent_ $ ffor inputE $ \_ -> liftIO $ handle (_element_raw element_)
-                                                        ref
-                                                        triggerOut
-                                                        configuration
+    ctxRef <- askJSM
+    performEvent_ $ ffor inputE $ \_ -> flip runJSM ctxRef $ handle (_element_raw element_)
+                                                             ref
+                                                             triggerOut
+                                                             configuration
     return outE
 
     where
@@ -51,13 +51,13 @@ codemirror configuration = do
                -- ^ Element
                -> IORef (Maybe CodeMirrorRef)
                -- ^ Local state
-               -> (Text -> IO ())
+               -> (Text -> JSM ())
                -- ^ Trigger for output event
                -> Configuration
                -- ^ Chart data
-               -> IO ()
+               -> JSM ()
         handle element_ ref trigger configuration_ = do
-            currentRef_ <- readIORef ref
+            currentRef_ <- liftIO $ readIORef ref
             case currentRef_ of
                 Nothing   -> onFirstTime element_ ref trigger configuration_
                 Just ref_ -> onNextTime  ref_                 configuration_
@@ -68,18 +68,16 @@ codemirror configuration = do
                     -- ^ Element
                     -> IORef (Maybe CodeMirrorRef)
                     -- ^ Local state
-                    -> (Text -> IO ())
+                    -> (Text -> JSM ())
                     -- ^ Trigger for output event
                     -> Configuration
                     -- ^ Chart data
-                    -> IO ()
+                    -> JSM ()
         onFirstTime element_ ref trigger configuration_ = do
             ref_ <- fromTextArea element_ configuration_
-            writeIORef ref (Just ref_)
-
-            onChange ref_
-                     (onChangeCallback trigger)
-
+            liftIO $ writeIORef ref (Just ref_)
+            registerOnChange ref_
+                             (onChangeCallback trigger)
             return ()
 
 
@@ -87,18 +85,14 @@ codemirror configuration = do
                    -- ^ Current value of local state
                    -> Configuration
                    -- ^ Chart data
-                   -> IO ()
+                   -> JSM ()
         onNextTime _ _ = do
             return ()
 
 
-        onChangeCallback :: (Text -> IO ())
-                         -> JSVal
-                         -> IO ()
-        onChangeCallback trigger jsval_ = do
-            Just (json_ :: Text) <- fromJSVal jsval_
-            {-let Just (event :: ChartJsSelection) = Aeson.decodeStrict . encodeUtf8 $ json_-}
-            let event = json_
-            --print event
-            trigger event
+        onChangeCallback :: (Text -> JSM ())
+                         -> Text
+                         -> JSM ()
+        onChangeCallback trigger t = do
+            liftIO $ trigger t
             return ()
