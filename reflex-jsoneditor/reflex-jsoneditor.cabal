@@ -37,6 +37,24 @@ library
   ghc-options:         -O2 -Wall -Werror
   default-language:    Haskell2010
 
+executable reflex-jsoneditor-exe
+  main-is: Main.hs
+  hs-source-dirs:
+      app
+  ghc-options: -threaded
+  build-depends:
+      base >=4.7 && <5
+    , lens
+    , time
+    , text
+    , data-default
+    , aeson
+    , bytestring
+    , reflex-dom
+    , reflex-utils
+    , reflex-jsoneditor
+  default-language: Haskell2010
+
 source-repository head
   type:     git
   location: https://github.com/atidot/reflex-widgets

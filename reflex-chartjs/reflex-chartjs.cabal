@@ -57,6 +57,7 @@ executable reflex-chartjs-exe
     , aeson
     , bytestring
     , reflex-dom
+    , reflex-utils
     , reflex-chartjs
   default-language: Haskell2010
 

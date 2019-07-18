@@ -16,6 +16,7 @@ reflex-platform.project({ pkgs, ... }: {
     reflex-jsoneditor = ./reflex-jsoneditor;
     reflex-codemirror = ./reflex-codemirror;
     reflex-select2    = ./reflex-select2;
+    reflex-mdl        = ./reflex-mdl;
     reflex-utils      = ./reflex-utils;
   };
 

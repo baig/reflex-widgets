@@ -6,5 +6,6 @@ chartjs:
 codemirror:
 	nix-build ${NIX_FLAGS} -A ghcjs.reflex-codemirror
 
-
+jsoneditor:
+	nix-build ${NIX_FLAGS} -A ghcjs.reflex-jsoneditor
 
