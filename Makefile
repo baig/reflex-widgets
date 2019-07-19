@@ -12,3 +12,5 @@ jsoneditor:
 jexcel:
 	nix-build ${NIX_FLAGS} -A ghcjs.reflex-jexcel
 
+fileapi:
+	nix-build ${NIX_FLAGS} -A ghcjs.reflex-fileapi
