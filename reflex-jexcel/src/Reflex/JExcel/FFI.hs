@@ -157,7 +157,8 @@ getData :: (IsElement element)
 getData element
         onlyHighlighted
     = do
-    let js_element  = unElement . toElement  $ element
+    let js_element'  = unElement . toElement  $ element
+    js_element <- jsgf "jQuery" js_element'
     result <- js_element ^. js2 "jexcel" "getData" onlyHighlighted
     return result
 
@@ -165,7 +166,7 @@ getData element
 setData :: (IsElement element)
         => element
         -- ^ Element
-        -> Maybe JSVal
+        -> Maybe [[Text]]
         -- ^ Optional: new JSON data
         -> Bool
         -- ^ Ignore Spare
@@ -174,8 +175,14 @@ setData element
         mNewData
         ignoreSpare
     = do
-    let js_element  = unElement . toElement  $ element
-    _ <- js_element ^. js3 "jexcel" "setData" mNewData ignoreSpare
+    let js_element'  = unElement . toElement  $ element
+    js_element <- jsgf "jQuery" js_element'
+    case mNewData of
+        Nothing -> return ()
+        Just newData -> do
+            let js_newData  = toJSON $ newData
+            _ <- js_element ^. js3 "jexcel" "setData" js_newData ignoreSpare
+            return ()
     return ()
 
 
@@ -188,7 +195,8 @@ deleteColumn :: (IsElement element)
 deleteColumn element
              columnNumber
     = do
-    let js_element  = unElement . toElement  $ element
+    let js_element'  = unElement . toElement  $ element
+    js_element <- jsgf "jQuery" js_element'
     _ <- js_element ^. js2 "jexcel" "deleteColumn" columnNumber
     return ()
 
@@ -202,7 +210,8 @@ insertRow :: (IsElement element)
 insertRow element
           rowNumber
     = do
-    let js_element  = unElement . toElement  $ element
+    let js_element'  = unElement . toElement  $ element
+    js_element <- jsgf "jQuery" js_element'
     _ <- js_element ^. js2 "jexcel" "insertRow" rowNumber
     return ()
 
@@ -216,7 +225,8 @@ deleteRow :: (IsElement element)
 deleteRow element
           rowNumber
     = do
-    let js_element  = unElement . toElement  $ element
+    let js_element'  = unElement . toElement  $ element
+    js_element <- jsgf "jQuery" js_element'
     _ <- js_element ^. js2 "jexcel" "deleteRow" rowNumber
     return ()
 
@@ -230,7 +240,8 @@ getHeader :: (IsElement element)
 getHeader element
           columnNumber
     =  do
-    let js_element  = unElement . toElement  $ element
+    let js_element'  = unElement . toElement  $ element
+    js_element <- jsgf "jQuery" js_element'
     result <- js_element ^. js2 "jexcel" "getHeader" columnNumber
     return result
 
@@ -247,7 +258,8 @@ setHeader element
           columnNumber
           columnTitle
     = do
-    let js_element  = unElement . toElement  $ element
+    let js_element'  = unElement . toElement  $ element
+    js_element <- jsgf "jQuery" js_element'
     _ <- js_element ^. js3 "jexcel" "setHeader" columnNumber columnTitle
     return ()
 
@@ -261,7 +273,8 @@ getWidth :: (IsElement element)
 getWidth element
          columnNumber
     = do
-    let js_element  = unElement . toElement  $ element
+    let js_element'  = unElement . toElement  $ element
+    js_element <- jsgf "jQuery" js_element'
     result <- js_element ^. js2 "jexcel" "getWidth" columnNumber
     return result
 
@@ -277,7 +290,8 @@ setWidth element
          columnNumber
          newColumnWidth
     = do
-    let js_element  = unElement . toElement  $ element
+    let js_element'  = unElement . toElement  $ element
+    js_element <- jsgf "jQuery" js_element'
     _ <- js_element ^. js3 "jexcel" "setWidth" columnNumber newColumnWidth
     return ()
 
@@ -294,7 +308,8 @@ orderBy element
         columnNumber
         sortType
     = do
-    let js_element  = unElement . toElement  $ element
+    let js_element'  = unElement . toElement  $ element
+    js_element <- jsgf "jQuery" js_element'
     _ <- js_element ^. js3 "jexcel" "orderBy" columnNumber sortType
     return ()
 
@@ -308,7 +323,8 @@ getValue :: (IsElement element)
 getValue element
          cellIdent
     = do
-    let js_element  = unElement . toElement  $ element
+    let js_element'  = unElement . toElement  $ element
+    js_element <- jsgf "jQuery" js_element'
     result <- js_element ^. js2 "jexcel" "getValue" cellIdent
     return result
 
@@ -325,7 +341,8 @@ setValue element
          cellIdent
          value
     = do
-    let js_element  = unElement . toElement  $ element
+    let js_element'  = unElement . toElement  $ element
+    js_element <- jsgf "jQuery" js_element'
     _ <- js_element ^. js3 "jexcel" "setValue" cellIdent value
     return ()
 
@@ -345,7 +362,8 @@ updateSelection element
                 endCell
                 ignoreEvents
     = do
-    let js_element  = unElement . toElement  $ element
+    let js_element'  = unElement . toElement  $ element
+    js_element <- jsgf "jQuery" js_element'
     _ <- js_element ^. js4 "jexcel" "updateSelection" startCell endCell ignoreEvents
     return ()
 
@@ -356,7 +374,8 @@ download :: (IsElement element)
          -> JSM ()
 download element
     = do
-    let js_element  = unElement . toElement  $ element
+    let js_element'  = unElement . toElement  $ element
+    js_element <- jsgf "jQuery" js_element'
     _ <- js_element ^. js1 "jexcel" "download"
     return ()
 
@@ -370,7 +389,8 @@ getConfig :: (IsElement element)
 getConfig element
           key
     = do
-    let js_element  = unElement . toElement  $ element
+    let js_element'  = unElement . toElement  $ element
+    js_element <- jsgf "jQuery" js_element'
     result <- js_element ^. js2 "jexcel" "getConfig" key
     return result
 
@@ -387,7 +407,8 @@ setConfig element
           key
           value
     = do
-    let js_element  = unElement . toElement  $ element
+    let js_element'  = unElement . toElement  $ element
+    js_element <- jsgf "jQuery" js_element'
     _ <- js_element ^. js3 "jexcel" "setconfig" key value
     return ()
 
@@ -401,7 +422,8 @@ getStyle :: (IsElement element)
 getStyle element
          mCellIdent
     = do
-    let js_element  = unElement . toElement  $ element
+    let js_element'  = unElement . toElement  $ element
+    js_element <- jsgf "jQuery" js_element'
     result <- js_element ^. js2 "jexcel" "getStyle" mCellIdent
     return result
 
@@ -415,7 +437,8 @@ setStyle :: (IsElement element)
 setStyle element
          styles
     = do
-    let js_element  = unElement . toElement  $ element
+    let js_element'  = unElement . toElement  $ element
+    js_element <- jsgf "jQuery" js_element'
     _ <- js_element ^. js2 "jexcel" "setSTyle" styles
     return ()
 
@@ -429,7 +452,8 @@ getComments :: (IsElement element)
 getComments element
             mCellIdent
     = do
-    let js_element  = unElement . toElement  $ element
+    let js_element'  = unElement . toElement  $ element
+    js_element <- jsgf "jQuery" js_element'
     result <- js_element ^. js2 "jexcel" "getComments" mCellIdent
     return result
 
@@ -446,7 +470,8 @@ setComments element
             cellIdent
             comment
     = do
-    let js_element  = unElement . toElement  $ element
+    let js_element'  = unElement . toElement  $ element
+    js_element <- jsgf "jQuery" js_element'
     _ <- js_element ^. js3 "jexcel" "setComments" cellIdent comment
     return ()
 
@@ -460,7 +485,8 @@ getMeta :: (IsElement element)
 getMeta element
         mCellIdent
     = do
-    let js_element  = unElement . toElement  $ element
+    let js_element'  = unElement . toElement  $ element
+    js_element <- jsgf "jQuery" js_element'
     result <- js_element ^. js2 "jexcel" "getMeta" mCellIdent
     return result
 
@@ -474,7 +500,8 @@ setMeta :: (IsElement element)
 setMeta element
         metas
     = do
-    let js_element  = unElement . toElement  $ element
+    let js_element'  = unElement . toElement  $ element
+    js_element <- jsgf "jQuery" js_element'
     result <- js_element ^. js2 "jexcel" "setMeta" metas
     return result
 

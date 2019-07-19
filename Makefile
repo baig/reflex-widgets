@@ -9,3 +9,6 @@ codemirror:
 jsoneditor:
 	nix-build ${NIX_FLAGS} -A ghcjs.reflex-jsoneditor
 
+jexcel:
+	nix-build ${NIX_FLAGS} -A ghcjs.reflex-jexcel
+

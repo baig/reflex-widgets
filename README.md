@@ -44,6 +44,18 @@ Opening in existing browser session.
 ~~~
 ![alt text][jsoneditor_gif]
 
+# [JExcel]
+- [Main.hs](./reflex-jexcel/app/Main.hs)
+~~~ shell
+09:58 barak@berkos:~/Development/atidot/reflex-widgets (master) $ make jexcel
+nix-build --cores 0 -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/19.03.tar.gz -A ghcjs.reflex-jexcel
+trace: WARNING: ignoring dependency on doctest
+/nix/store/7jrwsbfkz73b8mghlnh962qbhykva7p0-reflex-jexcel-0.1.0.0
+09:58 barak@berkos:~/Development/atidot/reflex-widgets (master) $ chromium ./result/bin/reflex-jexcel-exe.jsexe/index.html
+Fontconfig warning: "/etc/fonts/fonts.conf", line 86: unknown element "blank"
+~~~
+![alt text][jexcel_gif]
+
 # PowerQuery parser editor
 - [PowerQuery_editor]
 
@@ -53,4 +65,6 @@ Opening in existing browser session.
 [codemirror_gif]: https://media.giphy.com/media/H1MMpzOlyb2kne4M7i/giphy.gif
 [JsonEditor]: https://github.com/josdejong/jsoneditor
 [jsoneditor_gif]: https://media.giphy.com/media/MEpNi9paiNYld5AXHi/giphy.gif
+[JExcel]: https://bossanova.uk/jexcel/v2/
+[jexcel_gif]: https://media.giphy.com/media/YSY5IbCmhhGQJQSyAh/giphy.gif
 [PowerQuery_editor]: https://github.com/Atidot/language-powerquery/tree/master/language-powerquery-editor#language-powerquery-editor

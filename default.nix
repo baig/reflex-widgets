@@ -12,7 +12,7 @@ in
 reflex-platform.project({ pkgs, ... }: {
   packages = {
     reflex-chartjs    = ./reflex-chartjs;
-    reflex-jexcel     = ./relfex-jexcel;
+    reflex-jexcel     = ./reflex-jexcel;
     reflex-jsoneditor = ./reflex-jsoneditor;
     reflex-codemirror = ./reflex-codemirror;
     reflex-select2    = ./reflex-select2;
