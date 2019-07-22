@@ -65,7 +65,7 @@ trace: WARNING: ignoring dependency on doctest
 /nix/store/lhbbxdbik3j4yg9cwpfv9dpxfrgl9yig-reflex-fileapi-0.1.0.0
 01:59 barak@berkos:~/Development/atidot/reflex-widgets (master) $ chromium ./result/bin/reflex-fileapi-exe.jsexe/index.html
 ~~~
-[alt text][fileapi_gif]
+![alt text][fileapi_gif]
 
 # PowerQuery parser editor
 - [PowerQuery_editor]
