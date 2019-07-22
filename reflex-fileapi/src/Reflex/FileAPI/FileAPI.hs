@@ -1,79 +1,65 @@
 {-# LANGUAGE PackageImports #-}
+{-# LANGUAGE GADTs #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 module Reflex.FileAPI.FileAPI where
 
-import                       Prelude hiding ((!!), readFile)
-import           "base"      Control.Monad.IO.Class (liftIO)
-import           "lens"      Control.Lens hiding (element, (#))
-import           "stm"       Control.Concurrent.STM
-import           "stm-chans" Control.Concurrent.STM.TBMQueue
-import           "text"      Data.Text (Text)
-import qualified "text"      Data.Text as T
-import           "jsaddle"   Language.Javascript.JSaddle
-import                       GHCJS.DOM.Element (IsElement, toElement, unElement)
+import "base"       Control.Monad.IO.Class (liftIO)
+import "stm"                  Control.Concurrent.STM (atomically)
+import "stm-chans"            Control.Concurrent.STM.TBMQueue (newTBMQueueIO, readTBMQueue)
+import "text"       Data.Text (Text)
+import "jsaddle"    Language.Javascript.JSaddle
+import              GHCJS.DOM.Element
+import "reflex"     Reflex
+import "reflex-dom" Reflex.Dom hiding (Value)
+import              Reflex.FileAPI.FFI (readFileW)
 
-readFile :: ( IsElement element
-            )
-         => TBMQueue Text
-         -- ^ Output Queue
-         -> element
-         -- ^ Element
-         -> Int
-         -- ^ Start
-         -> Int
-         -- ^ Step
-         ---------
-         -> Text
-         -- ^ File name
-         -> Int
-         -- ^ File size
-         -> Text
-         -- ^ Text read from file
-         -> JSM ()
-readFile q element start step
-         _ _ result
-    = do
-    if T.length result == 0
-    then do
-        liftIO $ atomically $ closeTBMQueue q
-        return ()
-    else do
-        liftIO $ atomically $ writeTBMQueue q result
-        readSlice element
-                  (readFile q element (start + step) step)
-                  start
-                  step
-        return ()
+filereader :: forall t m. (MonadWidget t m)
+           => Int
+           -- ^ Read chunk (step) size
+           -> Event t ()
+           -- ^ Input trigger
+           -> m (Event t Text)
+filereader step inputE = do
+    -- HTML element
+    (element', _) <- elAttr' "input"
+                             ( "type" =: "file"
+                            <> "name" =: "files[]"
+                            <> "multiple" =: ""
+                             )
+                             blank
 
+    -- output event + trigger
+    (outE :: Event t Text, triggerOut) <- newTriggerEvent
 
-readSlice :: ( IsElement element
-             )
-          => element
-          -- ^ Element
-          -> (Text -> Int -> Text -> JSM ())
-          -- ^ Callback
-          -> Int
-          -- ^ Start
-          -> Int
-          -- ^ Step
-          -> JSM ()
-readSlice element
-          callback
-          start
-          step
-    = do
-    let js_element = unElement . toElement  $ element
-    files  <- js_element ^. js "files"
-    file   <- files !! 0
-    size'  <- valToNumber =<< file ^. js "size"
-    let size = floor size'
-    reader <- new (jsg "FileReader") ()
-    reader ^. jss "onloadend" (fun $ \_ _ [evt] -> do
-        name <- valToText =<< file ^. js "name"
-        text <- valToText =<< evt ^. js "target" ^. js "result"
-        callback name size text
-        )
-    blob <- file ^. js2 "slice" start (min (start + step) size)
-    _ <- reader ^. js1 "readAsBinaryString" blob
-    return ()
+    -- handle input event
+    ctxRef <- askJSM
+    performEvent_ $ ffor inputE $ \_ -> flip runJSM ctxRef $ onFile (_element_raw element')
+                                                                    triggerOut
 
-
+    return outE
+    where
+        onFile :: (IsElement el)
+               => el
+               -- ^ Element
+               -> (Text -> IO ())
+               -- ^ Trigger
+               -> JSM ()
+        onFile element' trigger = do
+            q <- liftIO $ newTBMQueueIO (1024 * 1024)
+            forkJSM $ do
+                readFileW q
+                         element'
+                         0     -- start
+                         step
+                         Nothing
+                         Nothing
+                         Nothing
+                         False
+            _ <- liftIO $ atomically $ readTBMQueue q
+            mText <- liftIO $ atomically $ readTBMQueue q
+            case mText of
+                Nothing -> return ()
+                Just t  -> trigger t
+            return ()

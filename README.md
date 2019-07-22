@@ -56,6 +56,17 @@ Fontconfig warning: "/etc/fonts/fonts.conf", line 86: unknown element "blank"
 ~~~
 ![alt text][jexcel_gif]
 
+# [HTML5 FileReader]
+- [Main.hs](./reflex-fileapi/app/Main.hs)
+~~~ shell
+01:59 barak@berkos:~/Development/atidot/reflex-widgets (master) $ make fileapi
+nix-build --cores 0 -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/19.03.tar.gz -A ghcjs.reflex-fileapi
+trace: WARNING: ignoring dependency on doctest
+/nix/store/lhbbxdbik3j4yg9cwpfv9dpxfrgl9yig-reflex-fileapi-0.1.0.0
+01:59 barak@berkos:~/Development/atidot/reflex-widgets (master) $ chromium ./result/bin/reflex-fileapi-exe.jsexe/index.html
+~~~
+[alt text][fileapi_gif]
+
 # PowerQuery parser editor
 - [PowerQuery_editor]
 
@@ -67,4 +78,6 @@ Fontconfig warning: "/etc/fonts/fonts.conf", line 86: unknown element "blank"
 [jsoneditor_gif]: https://media.giphy.com/media/MEpNi9paiNYld5AXHi/giphy.gif
 [JExcel]: https://bossanova.uk/jexcel/v2/
 [jexcel_gif]: https://media.giphy.com/media/YSY5IbCmhhGQJQSyAh/giphy.gif
+[HTML5 FileReader]: https://developer.mozilla.org/en-US/docs/Web/API/FileReader
+[fileapi_gif]: https://media.giphy.com/media/WOHPlzKN1bxGZ7BGxx/giphy.gif
 [PowerQuery_editor]: https://github.com/Atidot/language-powerquery/tree/master/language-powerquery-editor#language-powerquery-editor

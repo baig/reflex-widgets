@@ -15,7 +15,8 @@ cabal-version:       >=1.10
 
 library
   hs-source-dirs:      src
-  exposed-modules:     Reflex.FileAPI.FileAPI
+  exposed-modules:     Reflex.FileAPI.FFI
+                     , Reflex.FileAPI.FileAPI
   build-depends:       base
                      , text
                      , aeson
@@ -47,6 +48,7 @@ executable reflex-fileapi-exe
     , bytestring
     , reflex-dom
     , reflex-utils
+    , reflex-jexcel
     , reflex-fileapi
   default-language: Haskell2010
 

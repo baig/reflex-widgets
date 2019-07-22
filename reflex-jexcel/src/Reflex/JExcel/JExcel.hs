@@ -72,8 +72,8 @@ jexcel (JExcelInput htmlId jexcelD) = do
     postBuildTaggedE <- delay 0.1 postBuildTaggedE'
 
     let inputE = leftmost
-               [ postBuildTaggedE
-               , updated jexcelD
+               [ -- postBuildTaggedE
+                 updated jexcelD
                ]
 
     -- output event + trigger
