@@ -67,6 +67,18 @@ trace: WARNING: ignoring dependency on doctest
 ~~~
 ![alt text][fileapi_gif]
 
+# [Jdenticon]
+- [Main.hs](./reflex-jdenticon/app/Main.hs)
+~~~ shell
+23:09 barak@berkos:~/Development/atidot/reflex-widgets (master) $ make jdenticon
+nix-build --cores 0 -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/19.03.tar.gz -A ghcjs.reflex-jdenticon
+trace: WARNING: ignoring dependency on doctest
+/nix/store/q8ch4k6vvcwkm43jdknqlzbf5a0w9n5x-reflex-jdenticon-0.1.0.0
+23:09 barak@berkos:~/Development/atidot/reflex-widgets (master) $ chromium ./result/bin/reflex-jdenticon.jsexe/ind
+ex.html
+~~~
+![alt text][jdenticon_gif]
+
 # PowerQuery parser editor
 - [PowerQuery_editor]
 
@@ -80,4 +92,6 @@ trace: WARNING: ignoring dependency on doctest
 [jexcel_gif]: https://media.giphy.com/media/YSY5IbCmhhGQJQSyAh/giphy.gif
 [HTML5 FileReader]: https://developer.mozilla.org/en-US/docs/Web/API/FileReader
 [fileapi_gif]: https://media.giphy.com/media/WOHPlzKN1bxGZ7BGxx/giphy.gif
+[Jdenticon]: https://jdenticon.com/
+[jdenticon_gif]: https://media.giphy.com/media/dWUS2HLSokopDhW0MQ/giphy.gif
 [PowerQuery_editor]: https://github.com/Atidot/language-powerquery/tree/master/language-powerquery-editor#language-powerquery-editor
