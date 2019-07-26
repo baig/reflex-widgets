@@ -15,6 +15,9 @@ jexcel:
 jdenticon:
 	nix-build ${NIX_FLAGS} -A ghcjs.reflex-jdenticon
 
-
 fileapi:
 	nix-build ${NIX_FLAGS} -A ghcjs.reflex-fileapi
+
+tensorflowjs:
+	nix-build ${NIX_FLAGS} -A ghcjs.reflex-tensorflowjs
+

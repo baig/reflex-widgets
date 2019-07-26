@@ -1,0 +1,62 @@
+name:                reflex-tensorflowjs
+version:             0.1.0.0
+synopsis:            Reflex JSONEditor
+description:         Please see README.md
+homepage:            http://github.com/atidot/ux/reflex/reflex-widget-chartjs
+license:             MIT
+license-file:        LICENSE
+tested-with:         GHCJS == 8.2.2
+author:              Atidot Ltd
+maintainer:          devops@atidot.com
+copyright:           Copyright Atidot Ltd 2016
+category:            Other
+build-type:          Simple
+cabal-version:       >=1.10
+
+library
+  hs-source-dirs:      src
+  exposed-modules:     Reflex.TensorFlowJS
+                     --, Reflex.TensorFlowJS.Types
+                     --, Reflex.TensorFlowJS.Types.Types
+                     --, Reflex.TensorFlowJS.Types.Lens
+                     --, Reflex.TensorFlowJS.Types.Default
+                     --, Reflex.TensorFlowJS.Types.Json
+                     , Reflex.TensorFlowJS.TensorFlowJS
+                     , Reflex.TensorFlowJS.FFI
+  build-depends:       base
+                     , lens
+                     , text
+                     , aeson
+                     , derive
+                     , containers
+                     , data-default
+                     , jsaddle
+                     , ghcjs-dom
+                     , reflex-dom
+
+  ghc-options:         -O2 -Wall
+  default-language:    Haskell2010
+
+executable reflex-tensorflowjs-exe
+  main-is: Main.hs
+  hs-source-dirs:
+      app
+  ghc-options: -threaded
+  build-depends:
+      base >=4.7 && <5
+    , lens
+    , time
+    , text
+    , data-default
+    , aeson
+    , aeson-qq
+    , bytestring
+    , jsaddle
+    , reflex-dom
+    , reflex-utils
+    , reflex-tensorflowjs
+  default-language: Haskell2010
+
+source-repository head
+  type:     git
+  location: https://github.com/atidot/reflex-widgets

@@ -79,6 +79,17 @@ ex.html
 ~~~
 ![alt text][jdenticon_gif]
 
+# [Tensorflow.JS]
+- [Main.hs](./refex-tensorflowjs/app/Main.hs)
+~~~ shell
+16:36 barak@berkos:~/Development/atidot/reflex-widgets (master) $ make tensorflowjs
+nix-build --cores 0 -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/19.03.tar.gz -A ghcjs.reflex-tensorflowjs
+trace: WARNING: ignoring dependency on doctest
+/nix/store/zmnam8bzihwl7pivnrb8kr0shkr4a7k8-reflex-tensorflowjs-0.1.0.0
+16:37 barak@berkos:~/Development/atidot/reflex-widgets (master) $ chromium ./result/bin/reflex-tensorflowjs-exe.jsexe/index.html
+~~~
+![alt text][tensorflowjs_gif]
+
 # PowerQuery parser editor
 - [PowerQuery_editor]
 
@@ -94,4 +105,6 @@ ex.html
 [fileapi_gif]: https://media.giphy.com/media/WOHPlzKN1bxGZ7BGxx/giphy.gif
 [Jdenticon]: https://jdenticon.com/
 [jdenticon_gif]: https://media.giphy.com/media/dWUS2HLSokopDhW0MQ/giphy.gif
+[Tensorflow.js]: https://www.tensorflow.org/js
+[tensorflowjs_gif]: https://media.giphy.com/media/KG4wAicRsgqv9Ark9j/giphy.gif
 [PowerQuery_editor]: https://github.com/Atidot/language-powerquery/tree/master/language-powerquery-editor#language-powerquery-editor

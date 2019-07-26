@@ -11,15 +11,16 @@ let
 in
 reflex-platform.project({ pkgs, ... }: {
   packages = {
-    reflex-chartjs    = ./reflex-chartjs;
-    reflex-jexcel     = ./reflex-jexcel;
-    reflex-jsoneditor = ./reflex-jsoneditor;
-    reflex-codemirror = ./reflex-codemirror;
-    reflex-jdenticon   = ./reflex-jdenticon;
-    reflex-select2    = ./reflex-select2;
-    reflex-fileapi    = ./reflex-fileapi;
-    reflex-mdl        = ./reflex-mdl;
-    reflex-utils      = ./reflex-utils;
+    reflex-chartjs      = ./reflex-chartjs;
+    reflex-jexcel       = ./reflex-jexcel;
+    reflex-jsoneditor   = ./reflex-jsoneditor;
+    reflex-codemirror   = ./reflex-codemirror;
+    reflex-jdenticon    = ./reflex-jdenticon;
+    reflex-select2      = ./reflex-select2;
+    reflex-fileapi      = ./reflex-fileapi;
+    reflex-mdl          = ./reflex-mdl;
+    reflex-tensorflowjs = ./reflex-tensorflowjs;
+    reflex-utils        = ./reflex-utils;
   };
 
   shells = {
@@ -31,6 +32,7 @@ reflex-platform.project({ pkgs, ... }: {
               "reflex-jdenticon"
               "reflex-utils"
               "reflex-fileapi"
+              "reflex-tensorflowjs"
             ];
   };
 })
