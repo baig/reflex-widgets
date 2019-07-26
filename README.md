@@ -80,7 +80,7 @@ ex.html
 ![alt text][jdenticon_gif]
 
 # [Tensorflow.JS]
-- [Main.hs](./refex-tensorflowjs/app/Main.hs)
+- [Main.hs](./reflex-tensorflowjs/app/Main.hs)
 ~~~ shell
 16:36 barak@berkos:~/Development/atidot/reflex-widgets (master) $ make tensorflowjs
 nix-build --cores 0 -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/19.03.tar.gz -A ghcjs.reflex-tensorflowjs
