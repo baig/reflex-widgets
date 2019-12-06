@@ -13,11 +13,25 @@ module Reflex.JsonEditor.JsonEditor ( jsoneditor
 
 import "base"            Control.Monad.IO.Class (liftIO)
 import "base"            Data.IORef (IORef, newIORef, writeIORef, readIORef)
-import "aeson"           Data.Aeson (ToJSON(..), FromJSON(..))
-import "reflex-dom"      Reflex.Dom
+import "text"            Data.Text (unpack)
+import "bytestring"      Data.ByteString.Lazy.Char8 (pack)
+import "aeson"           Data.Aeson (ToJSON(..), FromJSON(..), decode)
+import "reflex-dom"      Reflex.Dom hiding (Value)
 import "ghcjs-dom-jsffi" GHCJS.DOM.Element (IsElement)
+import "jsaddle"         Language.Javascript.JSaddle
 import                   Reflex.JsonEditor.FFI
 
+
+data JsonEditor a
+    = JsonEditor
+    { _jsonEditor_trigger :: (ToJSON a, FromJSON a) => Maybe a -> IO ()
+    }
+
+instance (ToJSON a, FromJSON a) => JsonEditorHandlers (JsonEditor a) where
+    onChangeJSON self jsval' = do
+        json' <- strToText <$> valToJSON jsval'
+        let json = decode . pack . unpack $ json'
+        liftIO $ (_jsonEditor_trigger self) json
 
 --
 jsoneditor :: forall a t m. (ToJSON a, FromJSON a, Eq a, MonadWidget t m)
@@ -91,7 +105,9 @@ jsoneditor_ jsonableD = do
                     -- ^ json data
                     -> IO ()
         onFirstTime element_ jsonEditorRef trigger jsonable_ = do
-            ref <- newJsonEditor element_ def
+            ref <- newJsonEditor element_
+                                 def
+                                 (JsonEditor trigger)
             writeIORef jsonEditorRef (Just ref)
             set ref jsonable_
             trigger (Just jsonable_)

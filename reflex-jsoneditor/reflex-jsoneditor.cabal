@@ -26,6 +26,7 @@ library
   build-depends:       base
                      , lens
                      , text
+                     , bytestring
                      , aeson
                      , derive
                      , containers
