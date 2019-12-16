@@ -20,6 +20,7 @@ import "reflex-dom"      Reflex.Dom hiding (Value)
 import "ghcjs-dom-jsffi" GHCJS.DOM.Element (IsElement)
 import "jsaddle"         Language.Javascript.JSaddle
 import                   Reflex.JsonEditor.FFI
+import                   Reflex.JsonEditor.Types (JsonEditorOptions)
 
 
 data JsonEditor a
@@ -35,12 +36,14 @@ instance (ToJSON a, FromJSON a) => JsonEditorHandlers (JsonEditor a) where
 
 --
 jsoneditor :: forall a t m. (ToJSON a, FromJSON a, Eq a, MonadWidget t m)
-           => Dynamic t a
+           => JsonEditorOptions
+           -- ^ Options
+           -> Dynamic t a
            -- ^ value
            -> m (Dynamic t a)
            -- ^ out - changed value
-jsoneditor jsonableD = do
-    newJsonableE_ <- jsoneditor_ jsonableD
+jsoneditor options jsonableD = do
+    newJsonableE_ <- jsoneditor_ options jsonableD
     let newJsonableE = fmapMaybe id newJsonableE_ -- fires only when (Just _)
     initial <- sample . current $ jsonableD
     newJsonableD <- holdDyn initial newJsonableE
@@ -49,11 +52,13 @@ jsoneditor jsonableD = do
 
 --
 jsoneditor_ :: forall a t m. (ToJSON a, FromJSON a, Eq a, MonadWidget t m)
-            => Dynamic t a
+            => JsonEditorOptions
+            -- ^ Options
+            -> Dynamic t a
             -- ^ value
             -> m (Event t (Maybe a))
             -- ^ out - changed value
-jsoneditor_ jsonableD = do
+jsoneditor_ options jsonableD = do
 --    postBuildE <- getPostBuild
 
     -- jsoneditor element
@@ -106,7 +111,7 @@ jsoneditor_ jsonableD = do
                     -> IO ()
         onFirstTime element_ jsonEditorRef trigger jsonable_ = do
             ref <- newJsonEditor element_
-                                 def
+                                 options
                                  (JsonEditor trigger)
             writeIORef jsonEditorRef (Just ref)
             set ref jsonable_

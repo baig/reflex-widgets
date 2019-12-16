@@ -39,6 +39,6 @@ body = do
     (randomsE :: Event t [Int]) <- randomsW clickE
     randomsD <- holdDyn [] randomsE
 
-    outD <- jsoneditor randomsD
+    outD <- jsoneditor def randomsD
     display outD
     return ()
