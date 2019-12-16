@@ -31,7 +31,7 @@ data JsonEditorOptions
     , _jsonEditorOptions_search    :: !(Maybe Bool)
     , _jsonEditorOptions_indentation :: !(Maybe Int)
     , _jsonEditorOptions_theme :: !(Maybe String)
-    , _jsonEditorOptions_templaes :: !(Maybe Value)
+    , _jsonEditorOptions_templates :: !(Maybe Value)
     , _jsonEditorOptions_autocomplete :: !(Maybe Value)
     , _jsonEditorOptions_mainMenuBar :: !(Maybe Bool)
     , _jsonEditorOptions_navigatoinBar :: !(Maybe Bool)

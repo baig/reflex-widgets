@@ -9,6 +9,7 @@
 {-# OPTIONS_GHC -fno-warn-deprecations #-}
 
 module Reflex.JsonEditor.JsonEditor ( jsoneditor
+                                    , JsonEditorOptions
                                     ) where
 
 import "base"            Control.Monad.IO.Class (liftIO)
