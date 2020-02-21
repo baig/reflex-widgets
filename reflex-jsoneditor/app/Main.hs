@@ -26,8 +26,8 @@ main = mainWidget main_
 --
 head :: forall t m. MonadWidget t m => m (Dynamic t Bool)
 head = do
-    s1Ds <- sequence [ script "https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/7.0.4/jsoneditor.min.js"
-                     , css    "https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/7.0.4/jsoneditor.min.css"
+    s1Ds <- sequence [ script "https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/8.6.1/jsoneditor.min.js"
+                     , css    "https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/8.6.1/jsoneditor.min.css"
                      ]
     whenLoaded s1Ds blank $ return ()
 
@@ -36,9 +36,11 @@ body :: MonadWidget t m => m ()
 body = do
     clickE <- button "Random"
 
-    (randomsE :: Event t [Int]) <- randomsW clickE
+    (randomsE :: Event t [[Int]]) <- randomsW clickE
     randomsD <- holdDyn [] randomsE
 
-    outD <- jsoneditor def randomsD
+    (outD, selectE) <- jsoneditor def randomsD
     display outD
+    selectD <- holdDyn def selectE
+    display selectD
     return ()

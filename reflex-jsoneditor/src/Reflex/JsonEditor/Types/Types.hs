@@ -9,6 +9,14 @@ import "base"       Data.Char (toLower)
 import "base"       Data.Typeable (Typeable)
 import "aeson"      Data.Aeson as Aeson (Value)
 
+data JsonEditorSelection
+    = JsonEditorSelection
+    { _jsonEditorSelection_value :: !(Maybe Value)
+    , _jsonEditorSelection_path  :: !(Maybe [Value])
+    }
+    deriving (Show, Read, Eq, Data, Typeable, Generic)
+
+
 data JsonEditorMode
     = Tree
     | View

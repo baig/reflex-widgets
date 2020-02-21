@@ -7,5 +7,6 @@ module Reflex.JsonEditor.Types.Lens where
 import Control.Lens
 import Reflex.JsonEditor.Types.Types
 
+makeClassy ''JsonEditorSelection
 makeClassyPrisms ''JsonEditorMode
 makeClassy ''JsonEditorOptions

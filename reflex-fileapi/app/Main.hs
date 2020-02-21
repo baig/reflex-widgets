@@ -60,7 +60,7 @@ body = do
     return ()
     where
         stepSize :: Int
-        stepSize = 40000 -- bytes
+        stepSize = 10000000 -- bytes
 
         buildJExcel :: [[Text]] -> JExcel
         buildJExcel [] = def

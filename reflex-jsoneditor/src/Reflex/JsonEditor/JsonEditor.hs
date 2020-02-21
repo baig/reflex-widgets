@@ -17,16 +17,17 @@ import "base"            Data.IORef (IORef, newIORef, writeIORef, readIORef)
 import "text"            Data.Text (unpack)
 import "bytestring"      Data.ByteString.Lazy.Char8 (pack)
 import "aeson"           Data.Aeson (ToJSON(..), FromJSON(..), decode)
-import "reflex-dom"      Reflex.Dom hiding (Value)
+import "reflex-dom"      Reflex.Dom hiding (Value(..))
 import "ghcjs-dom-jsffi" GHCJS.DOM.Element (IsElement)
 import "jsaddle"         Language.Javascript.JSaddle
 import                   Reflex.JsonEditor.FFI
-import                   Reflex.JsonEditor.Types (JsonEditorOptions)
+import                   Reflex.JsonEditor.Types (JsonEditorOptions, JsonEditorSelection)
 
 
 data JsonEditor a
     = JsonEditor
-    { _jsonEditor_trigger :: (ToJSON a, FromJSON a) => Maybe a -> IO ()
+    { _jsonEditor_trigger       :: (ToJSON a, FromJSON a) => Maybe a -> IO ()
+    , _jsonEditor_triggerSelect :: JsonEditorSelection -> IO ()
     }
 
 instance (ToJSON a, FromJSON a) => JsonEditorHandlers (JsonEditor a) where
@@ -35,20 +36,33 @@ instance (ToJSON a, FromJSON a) => JsonEditorHandlers (JsonEditor a) where
         let json = decode . pack . unpack $ json'
         liftIO $ (_jsonEditor_trigger self) json
 
+    onSelectionChange self args = do
+        let json = head args
+        json' <- strToText <$> valToJSON json
+        liftIO $ print json'
+        let (mSelection :: Maybe JsonEditorSelection) = decode . pack . unpack $ json'
+        case mSelection of
+            Nothing -> return ()
+            Just selection -> do
+                liftIO $ (_jsonEditor_triggerSelect self) selection
+                liftIO $ print selection
+
 --
 jsoneditor :: forall a t m. (ToJSON a, FromJSON a, Eq a, MonadWidget t m)
            => JsonEditorOptions
            -- ^ Options
            -> Dynamic t a
            -- ^ value
-           -> m (Dynamic t a)
+           -> m ( Dynamic t a
+                , Event t (Maybe JsonEditorSelection)
+                )
            -- ^ out - changed value
 jsoneditor options jsonableD = do
-    newJsonableE_ <- jsoneditor_ options jsonableD
+    (newJsonableE_, selectE) <- jsoneditor_ options jsonableD
     let newJsonableE = fmapMaybe id newJsonableE_ -- fires only when (Just _)
     initial <- sample . current $ jsonableD
     newJsonableD <- holdDyn initial newJsonableE
-    return $ newJsonableD
+    return $ (newJsonableD, selectE)
 
 
 --
@@ -57,7 +71,9 @@ jsoneditor_ :: forall a t m. (ToJSON a, FromJSON a, Eq a, MonadWidget t m)
             -- ^ Options
             -> Dynamic t a
             -- ^ value
-            -> m (Event t (Maybe a))
+            -> m ( Event t (Maybe a)
+                 , Event t (Maybe JsonEditorSelection)
+                 )
             -- ^ out - changed value
 jsoneditor_ options jsonableD = do
 --    postBuildE <- getPostBuild
@@ -69,7 +85,15 @@ jsoneditor_ options jsonableD = do
     (jsonEditorRef :: IORef (Maybe JsonEditorRef)) <- liftIO $ newIORef Nothing
 
     -- output event + trigger
-    (outE, triggerOutE) <- newTriggerEvent
+    (outE, triggerOut) <- newTriggerEvent
+
+    -- selection event + trigger
+    (selectE', triggerSelect) <- newTriggerEvent
+    let selectE = leftmost
+                [ Nothing <$ outE
+                , Just   <$> selectE'
+                ]
+
 
     let inputE = leftmost
                [ updated jsonableD
@@ -78,10 +102,11 @@ jsoneditor_ options jsonableD = do
     -- handle input event
     performEvent_ $ ffor inputE $ \jsonable -> liftIO $ onInput (_element_raw el_)
                                                                 jsonEditorRef
-                                                                triggerOutE
+                                                                triggerOut
+                                                                triggerSelect
                                                                 jsonable
 
-    return $ outE
+    return $ (outE, selectE)
 
     where
         onInput :: (IsElement el)
@@ -91,13 +116,15 @@ jsoneditor_ options jsonableD = do
                 -- ^ Local state
                 -> (Maybe a -> IO ())
                 -- ^ Trigger for output event
+                -> (JsonEditorSelection -> IO ())
+                -- ^ Trigger for selection
                 -> a
                 -- ^ data
                 -> IO ()
-        onInput element_ jsonEditorRef trigger jsonable = do
+        onInput element_ jsonEditorRef trigger triggerSelect jsonable = do
             currentRef_ <- readIORef jsonEditorRef
             case currentRef_ of
-                Nothing  -> onFirstTime element_ jsonEditorRef trigger jsonable
+                Nothing  -> onFirstTime element_ jsonEditorRef trigger triggerSelect jsonable
                 Just ref -> onNextTime  ref                    trigger jsonable
 
         onFirstTime :: (IsElement el)
@@ -107,15 +134,20 @@ jsoneditor_ options jsonableD = do
                     -- ^ Local state
                     -> (Maybe a -> IO ())
                     -- ^ Trigger for output event
+                    -> (JsonEditorSelection -> IO ())
+                    -- ^ Trigger for selection
                     -> a
                     -- ^ json data
                     -> IO ()
-        onFirstTime element_ jsonEditorRef trigger jsonable_ = do
+        onFirstTime element_ jsonEditorRef trigger triggerSelect jsonable_ = do
             ref <- newJsonEditor element_
                                  options
-                                 (JsonEditor trigger)
+                                 (JsonEditor trigger
+                                             triggerSelect
+                                 )
             writeIORef jsonEditorRef (Just ref)
             set ref jsonable_
+            expandAll ref
             trigger (Just jsonable_)
             return ()
 
@@ -129,5 +161,6 @@ jsoneditor_ options jsonableD = do
                    -> IO ()
         onNextTime jsonEditorRef trigger jsonable_ = do
             set jsonEditorRef jsonable_
+            expandAll jsonEditorRef
             trigger (Just jsonable_)
             return ()
