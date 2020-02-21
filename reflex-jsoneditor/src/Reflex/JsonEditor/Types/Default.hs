@@ -15,3 +15,4 @@ instance Default Value where
 $(derive makeDefault ''JsonEditorMode)
 $(derive makeDefault ''JsonEditorOptions)
 $(derive makeDefault ''JsonEditorSelection)
+$(derive makeDefault ''JsonEditorEvent)

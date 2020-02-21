@@ -21,13 +21,13 @@ import "reflex-dom"      Reflex.Dom hiding (Value(..))
 import "ghcjs-dom-jsffi" GHCJS.DOM.Element (IsElement)
 import "jsaddle"         Language.Javascript.JSaddle
 import                   Reflex.JsonEditor.FFI
-import                   Reflex.JsonEditor.Types (JsonEditorOptions, JsonEditorSelection)
+import                   Reflex.JsonEditor.Types (JsonEditorOptions, JsonEditorSelection, JsonEditorEvent(..))
 
 
 data JsonEditor a
     = JsonEditor
     { _jsonEditor_trigger       :: (ToJSON a, FromJSON a) => Maybe a -> IO ()
-    , _jsonEditor_triggerSelect :: JsonEditorSelection -> IO ()
+    , _jsonEditor_triggerEvent  :: JsonEditorEvent -> IO ()
     }
 
 instance (ToJSON a, FromJSON a) => JsonEditorHandlers (JsonEditor a) where
@@ -36,7 +36,16 @@ instance (ToJSON a, FromJSON a) => JsonEditorHandlers (JsonEditor a) where
         let json = decode . pack . unpack $ json'
         liftIO $ (_jsonEditor_trigger self) json
 
-    onSelectionChange self args = do
+    onEvent self node'' _ = do
+        node' <- strToText <$> valToJSON node''
+        let (mNode :: Maybe JsonEditorEvent) = decode . pack . unpack $ node'
+        --event' <- strToText <$> valToJSON event''
+        --let event = decode . pack . unpack $ event'
+        case mNode of
+            Nothing   -> return ()
+            Just node -> liftIO $ (_jsonEditor_triggerEvent self node)
+
+    onSelectionChange _ args = do
         let json = head args
         json' <- strToText <$> valToJSON json
         liftIO $ print json'
@@ -44,7 +53,7 @@ instance (ToJSON a, FromJSON a) => JsonEditorHandlers (JsonEditor a) where
         case mSelection of
             Nothing -> return ()
             Just selection -> do
-                liftIO $ (_jsonEditor_triggerSelect self) selection
+                --liftIO $ (_jsonEditor_trigger self) selection
                 liftIO $ print selection
 
 --
@@ -54,7 +63,7 @@ jsoneditor :: forall a t m. (ToJSON a, FromJSON a, Eq a, MonadWidget t m)
            -> Dynamic t a
            -- ^ value
            -> m ( Dynamic t a
-                , Event t (Maybe JsonEditorSelection)
+                , Event t (Maybe JsonEditorEvent)
                 )
            -- ^ out - changed value
 jsoneditor options jsonableD = do
@@ -72,7 +81,7 @@ jsoneditor_ :: forall a t m. (ToJSON a, FromJSON a, Eq a, MonadWidget t m)
             -> Dynamic t a
             -- ^ value
             -> m ( Event t (Maybe a)
-                 , Event t (Maybe JsonEditorSelection)
+                 , Event t (Maybe JsonEditorEvent)
                  )
             -- ^ out - changed value
 jsoneditor_ options jsonableD = do
@@ -88,11 +97,11 @@ jsoneditor_ options jsonableD = do
     (outE, triggerOut) <- newTriggerEvent
 
     -- selection event + trigger
-    (selectE', triggerSelect) <- newTriggerEvent
-    let selectE = leftmost
-                [ Nothing <$ outE
-                , Just   <$> selectE'
-                ]
+    (eventE', triggerEvent) <- newTriggerEvent
+    let eventE = leftmost
+               [ Nothing <$ outE
+               , Just   <$> eventE'
+               ]
 
 
     let inputE = leftmost
@@ -103,10 +112,10 @@ jsoneditor_ options jsonableD = do
     performEvent_ $ ffor inputE $ \jsonable -> liftIO $ onInput (_element_raw el_)
                                                                 jsonEditorRef
                                                                 triggerOut
-                                                                triggerSelect
+                                                                triggerEvent
                                                                 jsonable
 
-    return $ (outE, selectE)
+    return $ (outE, eventE)
 
     where
         onInput :: (IsElement el)
@@ -116,15 +125,15 @@ jsoneditor_ options jsonableD = do
                 -- ^ Local state
                 -> (Maybe a -> IO ())
                 -- ^ Trigger for output event
-                -> (JsonEditorSelection -> IO ())
+                -> (JsonEditorEvent -> IO ())
                 -- ^ Trigger for selection
                 -> a
                 -- ^ data
                 -> IO ()
-        onInput element_ jsonEditorRef trigger triggerSelect jsonable = do
+        onInput element_ jsonEditorRef trigger triggerEvent jsonable = do
             currentRef_ <- readIORef jsonEditorRef
             case currentRef_ of
-                Nothing  -> onFirstTime element_ jsonEditorRef trigger triggerSelect jsonable
+                Nothing  -> onFirstTime element_ jsonEditorRef trigger triggerEvent jsonable
                 Just ref -> onNextTime  ref                    trigger jsonable
 
         onFirstTime :: (IsElement el)
@@ -134,16 +143,16 @@ jsoneditor_ options jsonableD = do
                     -- ^ Local state
                     -> (Maybe a -> IO ())
                     -- ^ Trigger for output event
-                    -> (JsonEditorSelection -> IO ())
+                    -> (JsonEditorEvent -> IO ())
                     -- ^ Trigger for selection
                     -> a
                     -- ^ json data
                     -> IO ()
-        onFirstTime element_ jsonEditorRef trigger triggerSelect jsonable_ = do
+        onFirstTime element_ jsonEditorRef trigger triggerEvent jsonable_ = do
             ref <- newJsonEditor element_
                                  options
                                  (JsonEditor trigger
-                                             triggerSelect
+                                             triggerEvent
                                  )
             writeIORef jsonEditorRef (Just ref)
             set ref jsonable_

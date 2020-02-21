@@ -9,6 +9,14 @@ import "base"       Data.Char (toLower)
 import "base"       Data.Typeable (Typeable)
 import "aeson"      Data.Aeson as Aeson (Value)
 
+
+data JsonEditorEvent
+    = JsonEditorEvent
+    { _jsonEditorEvent_path  :: !(Maybe [Value])
+    , _jsonEditorEvent_value :: !(Maybe Value)
+    }
+    deriving (Show, Read, Eq, Data, Typeable, Generic)
+
 data JsonEditorSelection
     = JsonEditorSelection
     { _jsonEditorSelection_value :: !(Maybe Value)

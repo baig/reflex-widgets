@@ -20,6 +20,9 @@ class JsonEditorHandlers a where
     onChangeJSON :: a -> JSVal -> JSM ()
     onChangeJSON  _ _ = return ()
 
+    onEvent :: a -> JSVal -> JSVal -> JSM ()
+    onEvent _ _ _ = return ()
+
     onSelectionChange :: a -> [JSVal] -> JSM ()
     onSelectionChange _ _ = return ()
 
@@ -41,6 +44,7 @@ newJsonEditor element'
     let js_element = unElement . toElement $ element'
     js_options <- toJSVal . toJSON $ options
     js_options ^. jss "onChangeJSON" (fun $ \_ _ [jsval'] -> onChangeJSON handlers $ jsval')
+    js_options ^. jss "onEvent" (fun $ \_ _ [node, event] -> onEvent handlers node event)
     js_options ^. jss "onSelectionChange" (fun $ \_ _ xs -> onSelectionChange handlers xs)
     jsoneditor <- nextAnimationFrame $ \_ -> new (jsg "JSONEditor") (js_element, js_options)
     return $ JsonEditorRef jsoneditor
