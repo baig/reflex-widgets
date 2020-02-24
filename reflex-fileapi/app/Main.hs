@@ -44,7 +44,7 @@ body = do
     clickE  <- button "Load"
 
     -- filereader is triggered by clickE
-    fileChunkTextE <- filereader stepSize clickE
+    fileChunkTextE <- filereader "files[]" stepSize clickE
 
     -- csvE :: Event t [[Text]]
     let csvE = (map (T.splitOn ",") . T.lines) <$> fileChunkTextE

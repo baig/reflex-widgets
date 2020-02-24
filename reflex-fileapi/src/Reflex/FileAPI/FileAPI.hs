@@ -16,16 +16,18 @@ import "reflex-dom" Reflex.Dom hiding (Value)
 import              Reflex.FileAPI.FFI (readFileW)
 
 filereader :: forall t m. (MonadWidget t m)
-           => Int
+           => Text
+           -- ^ name
+           -> Int
            -- ^ Read chunk (step) size
            -> Event t ()
            -- ^ Input trigger
            -> m (Event t Text)
-filereader step inputE = do
+filereader name step inputE = do
     -- HTML element
     (element', _) <- elAttr' "input"
                              ( "type" =: "file"
-                            <> "name" =: "files[]"
+                            <> "name" =: name
                             <> "multiple" =: ""
                              )
                              blank
