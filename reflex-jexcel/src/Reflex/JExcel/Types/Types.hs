@@ -24,6 +24,8 @@ data JExcel = JExcel
             , _jExcel_minSpareRows            :: !(Maybe Int)
             , _jExcel_minSpareCols            :: !(Maybe Int)
             , _jExcel_minDimensions           :: !(Maybe (Int, Int))
+            , _jExcel_tableOverflow           :: !(Maybe Bool)
+            , _jExcel_tableWidth              :: !(Maybe Text)
             , _jExcel_columnSorting           :: !(Maybe Bool)
             , _jExcel_columnResize            :: !(Maybe Bool)
             , _jExcel_rowDrag                 :: !(Maybe Bool)

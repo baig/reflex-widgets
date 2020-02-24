@@ -18,6 +18,8 @@ instance Default JExcel where
         , _jExcel_minSpareRows            = Nothing
         , _jExcel_minSpareCols            = Nothing
         , _jExcel_minDimensions           = Nothing
+        , _jExcel_tableOverflow           = Nothing
+        , _jExcel_tableWidth              = Nothing
         , _jExcel_columnSorting           = Nothing
         , _jExcel_columnResize            = Nothing
         , _jExcel_rowDrag                 = Nothing
