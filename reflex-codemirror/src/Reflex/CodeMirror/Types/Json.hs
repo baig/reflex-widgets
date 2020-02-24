@@ -7,3 +7,4 @@ import "aeson" Data.Aeson.TH
 import         Reflex.CodeMirror.Types.Types
 
 $(deriveJSON defaultOptions{omitNothingFields = True, fieldLabelModifier = drop (length "_configuration_")} ''Configuration)
+$(deriveJSON defaultOptions{omitNothingFields = True, fieldLabelModifier = drop (length "_lineChar_")} ''LineChar)

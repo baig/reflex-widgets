@@ -46,3 +46,17 @@ registerOnChange codeMirrorRef callback = do
         return ()
         )
     return ()
+
+
+scrollIntoView :: CodeMirrorRef
+               -- ^ ref
+               -> LineChar
+               -- ^ Line & Char
+               -> Int
+               -- ^ delay ms
+               -> JSM ()
+scrollIntoView ref lc delay = do
+    codemirror <- valToObject . unCodeMirrorRef $ ref
+    let js_lc  = toJSON $ lc
+    _ <- codemirror ^. js2 "scrollIntoView" js_lc delay
+    return ()

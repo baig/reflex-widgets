@@ -8,3 +8,4 @@ import "derive"       Data.DeriveTH (derive, makeDefault)
 import                Reflex.CodeMirror.Types.Types
 
 $(derive makeDefault ''Configuration)
+$(derive makeDefault ''LineChar)

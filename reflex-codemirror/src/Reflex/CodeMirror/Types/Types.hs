@@ -42,3 +42,9 @@ data Configuration
     , _configuration_pollInterval :: !(Maybe Int) -- Ms
     --
     } deriving (Show, Read, Eq, Data, Typeable, Generic)
+
+data LineChar
+    = LineChar
+    { _lineChar_line :: !Int
+    , _lineChar_char :: !Int
+    } deriving (Show, Read, Eq, Data, Typeable, Generic)

@@ -37,7 +37,9 @@ head = do
 --
 body :: MonadWidget t m => m ()
 body = do
-    textE <- codemirror config
+    clickE <- button "goto line 3"
+    let lineCharE = (Just $ LineChar 3 1) <$ clickE
+    textE <- codemirror config lineCharE
     textD <- holdDyn "" textE
     display textD
     where

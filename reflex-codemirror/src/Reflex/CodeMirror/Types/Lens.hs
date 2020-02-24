@@ -8,4 +8,4 @@ import Control.Lens
 import Reflex.CodeMirror.Types.Types
 
 makeClassy ''Configuration
-
+makeClassy ''LineChar
